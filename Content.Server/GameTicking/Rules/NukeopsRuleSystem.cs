@@ -7,8 +7,6 @@ using Content.Server.Ghost.Roles.Components;
 using Content.Server.Ghost.Roles.Events;
 using Content.Server.Humanoid;
 using Content.Server.Mind;
-using Content.Server.NPC.Components;
-using Content.Server.NPC.Systems;
 using Content.Server.Nuke;
 using Content.Server.NukeOps;
 using Content.Server.Popups;
@@ -30,6 +28,8 @@ using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
+using Content.Shared.NPC.Components;
+using Content.Shared.NPC.Systems;
 using Content.Shared.Nuke;
 using Content.Shared.NukeOps;
 using Content.Shared.Preferences;
@@ -37,6 +37,7 @@ using Content.Shared.Roles;
 using Content.Shared.Store;
 using Content.Shared.Tag;
 using Content.Shared.Zombies;
+using FastAccessors;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
@@ -45,6 +46,10 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
 using System.Linq;
+
+// Imperial Space nukeops-fix Imports Start
+using Content.Shared.Mind;
+// Imperial Space nukeops-fix Imports End
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -191,10 +196,14 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
     private void OnRoundEndText(RoundEndTextAppendEvent ev)
     {
         var ruleQuery = QueryActiveRules();
+        bool nukeInRound = false; // Imperial Space nukeops-fix
+
         while (ruleQuery.MoveNext(out _, out _, out var nukeops, out _))
         {
             var winText = Loc.GetString($"nukeops-{nukeops.WinType.ToString().ToLower()}");
             ev.AddLine(winText);
+
+            nukeInRound = true; // Imperial Space nukeops-fix
 
             foreach (var cond in nukeops.WinConditions)
             {
@@ -203,18 +212,31 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
             }
         }
 
-        ev.AddLine(Loc.GetString("nukeops-list-start"));
+        if (nukeInRound) ev.AddLine(Loc.GetString("nukeops-list-start")); // Imperial Space nukeops-fix
 
-        var nukiesQuery = EntityQueryEnumerator<NukeopsRoleComponent, MindContainerComponent>();
-        while (nukiesQuery.MoveNext(out var nukeopsUid, out _, out var mindContainer))
+        // var nukiesQuery = EntityQueryEnumerator<NukeopsRoleComponent, MindContainerComponent>();
+        // while (nukiesQuery.MoveNext(out var nukeopsUid, out _, out var mindContainer))
+        // {
+        //     if (!_mind.TryGetMind(nukeopsUid, out _, out var mind, mindContainer))
+        //         continue;
+
+        //     ev.AddLine(mind.Session != null
+        //         ? Loc.GetString("nukeops-list-name-user", ("name", Name(nukeopsUid)), ("user", mind.Session.Name))
+        //         : Loc.GetString("nukeops-list-name", ("name", Name(nukeopsUid))));
+        // }
+
+        // Imperial Space nukeops-fix Start
+        var nukiesQuery = EntityQueryEnumerator<NukeopsRoleComponent, MindComponent>();
+        while (nukiesQuery.MoveNext(out var nukeopsUid, out _, out var mind))
         {
-            if (!_mind.TryGetMind(nukeopsUid, out _, out var mind, mindContainer))
-                continue;
+            if (mind == null) continue;
+            var nukeopName = Name(nukeopsUid);
 
             ev.AddLine(mind.Session != null
-                ? Loc.GetString("nukeops-list-name-user", ("name", Name(nukeopsUid)), ("user", mind.Session.Name))
-                : Loc.GetString("nukeops-list-name", ("name", Name(nukeopsUid))));
+                ? Loc.GetString("nukeops-list-name-user", ("name", nukeopName[6..^1]), ("user", mind.Session.Name))
+                : Loc.GetString("nukeops-list-name", ("name", nukeopName[6..^1])));
         }
+        // Imperial Space nukeops-fix End
     }
 
     private void OnNukeExploded(NukeExplodedEvent ev)
@@ -474,7 +496,7 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
         var eligibleQuery = EntityQueryEnumerator<StationEventEligibleComponent, NpcFactionMemberComponent>();
         while (eligibleQuery.MoveNext(out var eligibleUid, out var eligibleComp, out var member))
         {
-            if (!_npcFaction.IsFactionHostile(component.Faction, eligibleUid, member))
+            if (!_npcFaction.IsFactionHostile(component.Faction, (eligibleUid, member)))
                 continue;
 
             eligible.Add((eligibleUid, eligibleComp, member));
@@ -538,11 +560,11 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
         }
 
         var allAlive = true;
-        var query = EntityQueryEnumerator<NukeopsRoleComponent, MindContainerComponent, MobStateComponent>();
-        while (query.MoveNext(out var nukeopsUid, out _, out var mindContainer, out var mobState))
+        var query = EntityQueryEnumerator<NukeopsRoleComponent, MindComponent, MobStateComponent>(); // Imperial Space nukeops-fix
+        while (query.MoveNext(out var nukeopsUid, out _, out var mind, out var mobState))
         {
             // mind got deleted somehow so ignore it
-            if (!_mind.TryGetMind(nukeopsUid, out _, out var mind, mindContainer))
+            if (mind == null) // Imperial Space nukeops-fix
                 continue;
 
             // check if player got gibbed or ghosted or something - count as dead

@@ -20,6 +20,9 @@
     - neck
   - type: StaticPrice
     price: 100
+  - type: Tag
+    tags:
+    - Bedsheet
 
 - type: entity
   id: BedsheetBlack
@@ -279,17 +282,6 @@
     sprite: Clothing/Neck/Bedsheets/rd.rsi
   - type: StealTarget
     stealGroup: HeadBedsheet
-
-- type: entity
-  id: BedsheetBrigmedic
-  parent: BedsheetBase
-  name: brigmedic's bedsheet
-  description: Not worse than cotton.
-  components:
-  - type: Sprite
-    state: sheetbrigmedic
-  - type: Clothing
-    sprite: Clothing/Neck/Bedsheets/brigmedic.rsi
 
 - type: entity
   id: BedsheetRed

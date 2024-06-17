@@ -147,7 +147,7 @@
     eyes: ClothingEyesHudSyndicate
     ears: ClothingHeadsetAltSyndicate
     gloves: ClothingHandsGlovesCombat
-    outerClothing: ClothingOuterHardsuitSyndieEliteFactionExplosion #Imperial explosiong nukeops hardsuits
+    outerClothing: ClothingOuterHardsuitSyndieMedicFactionExlposion #Imperial explosiong nukeops hardsuits
     shoes: ClothingShoesBootsMagSyndie
     id: SyndiAgentPDA
     pocket1: DoubleEmergencyOxygenTankFilled
@@ -156,6 +156,26 @@
   innerClothingSkirt: ClothingUniformJumpskirtOperative
   satchel: ClothingBackpackDuffelSyndicateOperativeMedic
   duffelbag: ClothingBackpackDuffelSyndicateOperativeMedic
+
+#Syndicate Lone Operative Outfit - Full Kit
+- type: startingGear
+  id: SyndicateLoneOperativeGearFull
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOperative
+    back: ClothingBackpackDuffelSyndicateOperative
+    mask: ClothingMaskGasSyndicate
+    eyes: ClothingEyesHudSyndicate
+    ears: ClothingHeadsetAltSyndicate
+    gloves: ClothingHandsGlovesCombat
+    outerClothing: ClothingOuterHardsuitSyndie
+    shoes: ClothingShoesBootsCombatFilled
+    id: SyndiPDA
+    pocket1: DoubleEmergencyOxygenTankFilled
+    pocket2: BaseUplinkRadio60TC
+    belt: ClothingBeltMilitaryWebbing
+  innerClothingSkirt: ClothingUniformJumpskirtOperative
+  satchel: ClothingBackpackDuffelSyndicateOperative
+  duffelbag: ClothingBackpackDuffelSyndicateOperative
 
 # Syndicate Footsoldier Gear
 - type: startingGear
@@ -262,26 +282,6 @@
   innerClothingSkirt: ClothingUniformJumpskirtColorWhite
   inhand:
     - WeaponMeleeToolboxRobust
-
-#Brigmedic
-
-- type: startingGear
-  id: BrigmedicGear
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitBrigmedic
-    outerClothing: ClothingOuterCoatAMG
-    back: ClothingBackpackBrigmedic
-    shoes: ClothingShoesColorRed
-    gloves: ClothingHandsGlovesNitrile
-    eyes: ClothingEyesHudMedical
-    head: ClothingHeadHatBeretBrigmedic
-    id: BrigmedicPDA
-    ears: ClothingHeadsetBrigmedic
-    mask: ClothingMaskBreathMedicalSecurity
-    belt: ClothingBeltMedicalFilled
-  innerClothingSkirt: ClothingUniformJumpskirtBrigmedic
-  satchel: ClothingBackpackSatchelBrigmedicFilled
-  duffelbag: ClothingBackpackDuffelBrigmedicFilled
 
 # Aghost
 - type: startingGear
